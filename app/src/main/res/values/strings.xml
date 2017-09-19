@@ -4,4 +4,10 @@
     <string name="menu_item_notification">Notification</string>
     <string name="close">Close</string>
     <string name="open">Open</string>
+    <string name="history">History</string>
+    <string name="ideas">Ideas</string>
+    <string name="todo">TODO</string>
+    <string name="birthday">Birthday</string>
+
+
 </resources>
