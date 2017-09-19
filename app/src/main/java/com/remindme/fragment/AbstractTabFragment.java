@@ -5,7 +5,7 @@ import android.support.v4.app.Fragment;
 import android.view.View;
 
 
-public class AbstractTabFragment extends Fragment {
+public abstract class AbstractTabFragment extends Fragment {
 
     private String title;
     protected View view;
