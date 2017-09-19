@@ -1,5 +1,6 @@
 package com.remindme;
 
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
@@ -13,6 +14,13 @@ import android.view.MenuItem;
 
 import com.remindme.adapter.TabsFragmentAdapter;
 import com.remindme.constant.Constans;
+import com.remindme.dto.RemindDTO;
+
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.web.client.RestTemplate;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
     private static final int LAYOUT = R.layout.activity_main;
@@ -20,6 +28,7 @@ public class MainActivity extends AppCompatActivity {
     private Toolbar toolbar;
     private DrawerLayout drawerLayout;
     private ViewPager viewPager;
+    private TabsFragmentAdapter adapter;
 
 
     @Override
@@ -73,8 +82,10 @@ public class MainActivity extends AppCompatActivity {
     private void initTabs() {
         viewPager = (ViewPager)findViewById(R.id.viewPager);
 
-        TabsFragmentAdapter adapter = new TabsFragmentAdapter(this, getSupportFragmentManager());
+        adapter = new TabsFragmentAdapter(this, getSupportFragmentManager());
         viewPager.setAdapter(adapter);
+
+        new RemindMeTask().execute();
 
         TabLayout tabLayout  = (TabLayout)findViewById(R.id.tabLayout);
         tabLayout.setupWithViewPager(viewPager);
@@ -83,5 +94,22 @@ public class MainActivity extends AppCompatActivity {
 
     private void showNotificationTab(){
         viewPager.setCurrentItem(Constans.TAB_TWO);
+    }
+
+    private class RemindMeTask extends AsyncTask<Void,Void,RemindDTO>{
+
+        @Override
+        protected void onPostExecute(RemindDTO remindDTO) {
+            List<RemindDTO> list = new ArrayList<>();
+            list.add(remindDTO);
+            adapter.setData(list);
+        }
+
+        @Override
+        protected RemindDTO doInBackground(Void... voids) {
+            RestTemplate restTemplate = new RestTemplate();
+            restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
+            return restTemplate.getForObject(Constans.URL.GET_REMIND_ITEM, RemindDTO.class);
+        }
     }
 }

@@ -20,16 +20,24 @@ import java.util.List;
 public class HistoryFragment extends AbstractTabFragment {
 
     private static final int LAYOUT = R.layout.fragment_history;
+    private List<RemindDTO> data;
 
-    public static HistoryFragment getInstance(Context context){
+    private RemindListAdapter adapter;
+
+    public static HistoryFragment getInstance(Context context, List<RemindDTO> data){
         Bundle args = new Bundle();
         HistoryFragment exampleFragment = new HistoryFragment();
+
         exampleFragment.setArguments(args);
+        exampleFragment.setData(data);
         exampleFragment.setContext(context);
         exampleFragment.setTitle(context.getString(R.string.history));
         return exampleFragment;
     }
 
+    public void setData(List<RemindDTO> data) {
+        this.data = data;
+    }
 
     @Nullable
     @Override
@@ -38,11 +46,12 @@ public class HistoryFragment extends AbstractTabFragment {
 
         RecyclerView rv = view.findViewById(R.id.recyclerView);
         rv.setLayoutManager(new LinearLayoutManager(context));
-        rv.setAdapter(new RemindListAdapter(createMockRemindData()));
+        adapter = new RemindListAdapter(data);
+        rv.setAdapter(adapter);
         return view;
     }
 
-    private List<RemindDTO> createMockRemindData() {
+    /*private List<RemindDTO> createMockRemindData() {
         List<RemindDTO> data = new ArrayList<>();
         data.add(new RemindDTO("Item 1"));
         data.add(new RemindDTO("Item 2"));
@@ -52,9 +61,14 @@ public class HistoryFragment extends AbstractTabFragment {
         data.add(new RemindDTO("Item 6"));
 
         return data;
-    }
+    }*/
 
     public void setContext(Context context) {
         this.context = context;
+    }
+
+    public void refreshData(List<RemindDTO> list){
+        adapter.setData(list);
+        adapter.notifyDataSetChanged();
     }
 }
